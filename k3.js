@@ -104,8 +104,6 @@ this.K3 = function(){
           expArgs
         ));
 
-        console.log(op, expArgs)
-
         constraint = new kiwi.Constraint(expr, _ops[op]);
 
         if(name){
