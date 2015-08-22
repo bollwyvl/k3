@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>k3.js: a fluent constraint builder</title>
+  </head>
+  <body>
+    <script src="../../lib/kiwi/tsu.js"></script>
+    <script src="../../lib/kiwi/kiwi.js"></script>
+    <script src="../../k3.js"></script>
+    <script>
+      var k3 = K3(),
+
+        docEl = window.document.documentElement,
+
+        v = k3.variable,
+
+        width = v("width"),
+        height = v("height"),
+        padding = v("padding"),
+        screenW = v("screenW"),
+        screenH = v("screenH");
+
+      k3.eq("padding", padding, [100])
+        .eq(screenW, [width, padding.mul(2)])
+        .eq(screenH, [height, padding.mul(2)]);
+
+      window.onresize = function(){
+        k3.eq("screenW", screenW, [docEl.clientWidth])
+          .eq("screenH", screenH, [docEl.clientHeight]);
+
+        k3();
+        console.log(width(), height(), padding());
+      }
+
+    </script>
+  </body>
+</html>

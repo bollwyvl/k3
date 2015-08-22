@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <title>k3.js: a fluent constraint builder</title>
+    <style>
+      .box{ fill: steelblue; stroke: white; }
+      .outline{ fill: white; stroke: steelblue; }
+    </style>
+  </head>
+  <body>
+    <script src="../../lib/kiwi/tsu.js"></script>
+    <script src="../../lib/kiwi/kiwi.js"></script>
+    <script src="../../lib/d3/d3.js"></script>
+    <script src="../../k3.js"></script>
+    <script>
+      var dims = ["top", "right", "bottom", "left", "height", "width"],
+        k3 = K3(),
+        v = k3.variable,
+        width = k3.variable("width"),
+        height = k3.variable("height");
+
+      k3.eq(width, [500])
+        .eq(height, [500]);
+
+      function rectD(name){
+        var d = dims.reduce(
+          function(memo, k){
+            memo[k] = v(name + "_" + k);
+            return memo;
+          }, {});
+
+        // all boxes have internal constraints
+        k3
+          .eq(d.right, [d.left, d.width])
+          .eq(d.bottom, [d.top, d.height]);
+
+        return d;
+      }
+
+      var outlineD = rectD("outline");
+
+      var boxD = d3.range(10).map(function(i){
+        return rectD("box" + i);
+      });
+
+      boxD.forEach(function(d){
+        k3.eq(d.left, Math.random() * 450)
+          .eq(d.top, Math.random() * 450)
+          .eq(d.width, 50)
+          .eq(d.height, 50)
+          .le(outlineD.left, [d.left])
+          .ge(outlineD.right, [d.right])
+          .ge(outlineD.bottom, [d.bottom])
+          .le(outlineD.top, [d.top]);
+      });
+
+      var svg = d3.select("body")
+        .append("svg")
+        .attr({width: 500, height: 500});
+
+      var outline = svg.append("rect")
+        .classed({outline: 1})
+        .datum(outlineD);
+
+      var box = svg.selectAll(".box")
+        .data(boxD);
+
+      box.enter().append("rect")
+        .classed({box: 1})
+        .attr({
+          width: 50,
+          height: 50
+        });
+
+      var rect = svg.selectAll("rect");
+
+      function render(){
+        // rerun the constraints
+        k3();
+        // update all the positions
+        rect.attr({
+          width: function(d){ return d.width(); },
+          height: function(d){ return d.height(); },
+          x: function(d){ return d.left(); },
+          y: function(d){ return d.top(); }
+        });
+      }
+
+      render();
+
+      var drag = d3.behavior.drag()
+        .on("drag", function(d){
+          k3.eq(d.left, d.left() + d3.event.dx)
+            .eq(d.top, d.top() + d3.event.dy)
+            .eq(d.right, d.right() + d3.event.dx)
+            .eq(d.bottom, d.bottom() + d3.event.dy);
+          render();
+        });
+
+      box.call(drag);
+
+    </script>
+  </body>
+</html>

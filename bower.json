@@ -1,0 +1,19 @@
+{
+  "name": "k3",
+  "main": "k3.js",
+  "version": "0.0.0",
+  "authors": [
+    "Nicholas Bollweg <nick.bollweg@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "d3": "~3.5.6"
+  }
+}
