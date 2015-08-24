@@ -39,6 +39,12 @@
 
       var outlineD = rectD("outline");
 
+      k3.ge(outlineD.top, [0])
+        .ge(outlineD.left, [0])
+        .le(outlineD.right, [500])
+        .le(outlineD.bottom, [500])
+
+
       var boxD = d3.range(10).map(function(i){
         return rectD("box" + i);
       });
@@ -91,9 +97,7 @@
       var drag = d3.behavior.drag()
         .on("drag", function(d){
           k3.eq(d.left, d.left() + d3.event.dx)
-            .eq(d.top, d.top() + d3.event.dy)
-            .eq(d.right, d.right() + d3.event.dx)
-            .eq(d.bottom, d.bottom() + d3.event.dy);
+            .eq(d.top, d.top() + d3.event.dy);
           render();
         });
 
