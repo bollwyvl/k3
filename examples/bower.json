@@ -1,5 +1,5 @@
 {
-  "name": "k3",
+  "name": "k3-examples",
   "main": "k3.js",
   "version": "0.0.0",
   "authors": [
@@ -11,7 +11,9 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests",
-    "examples"
-  ]
+    "tests"
+  ],
+  "devDependencies": {
+    "d3": "~3.5.6"
+  }
 }

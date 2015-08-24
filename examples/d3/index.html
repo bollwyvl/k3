@@ -3,29 +3,43 @@
   <head>
     <title>k3.js: a fluent constraint builder</title>
     <style>
-      .box{ fill: steelblue; stroke: white; }
-      .outline{ fill: white; stroke: steelblue; }
+      body{
+        margin: 0;
+        padding: 0;
+      }
+      .box{
+        fill: steelblue;
+        stroke: white;
+        opacity: 0.75;
+      }
+      .outline{
+        fill: none;
+        stroke: crimson;
+        stroke-dasharray: 3,3;
+      }
     </style>
   </head>
   <body>
     <script src="../../lib/kiwi/tsu.js"></script>
     <script src="../../lib/kiwi/kiwi.js"></script>
-    <script src="../../lib/d3/d3.js"></script>
+    <script src="../lib/d3/d3.js"></script>
     <script src="../../k3.js"></script>
     <script>
-      var dims = ["top", "right", "bottom", "left", "height", "width"],
+      var dims = [
+          "top", "right", "bottom", "left", "height", "width"
+        ],
+        boxSize = 20,
+        numBoxes = 100,
+        width = document.documentElement.clientWidth * 0.8,
+        height = document.documentElement.clientHeight * 0.8,
         k3 = K3(),
-        v = k3.variable,
-        width = k3.variable("width"),
-        height = k3.variable("height");
-
-      k3.eq(width, [500])
-        .eq(height, [500]);
+        randX = d3.random.normal(width / 2, width / 4),
+        randY = d3.random.normal(height / 2, height / 4);
 
       function rectD(name){
         var d = dims.reduce(
           function(memo, k){
-            memo[k] = v(name + "_" + k);
+            memo[k] = k3.variable(name + "_" + k);
             return memo;
           }, {});
 
@@ -39,30 +53,30 @@
 
       var outlineD = rectD("outline");
 
-      k3.ge(outlineD.top, [0])
-        .ge(outlineD.left, [0])
-        .le(outlineD.right, [500])
-        .le(outlineD.bottom, [500])
-
-
-      var boxD = d3.range(10).map(function(i){
-        return rectD("box" + i);
-      });
+      var boxD = d3.range(numBoxes)
+        .map(function(i){
+          return rectD("box" + i);
+        });
 
       boxD.forEach(function(d){
-        k3.eq(d.left, Math.random() * 450)
-          .eq(d.top, Math.random() * 450)
-          .eq(d.width, 50)
-          .eq(d.height, 50)
+        k3.eq(d.left, randX())
+          .eq(d.top, randY())
+          .eq(d.width, boxSize)
+          .eq(d.height, boxSize)
           .le(outlineD.left, [d.left])
           .ge(outlineD.right, [d.right])
           .ge(outlineD.bottom, [d.bottom])
-          .le(outlineD.top, [d.top]);
+          .le(outlineD.top, [d.top])
+          .ge(d.top, [0])
+          .ge(d.left, [0])
+          .le(d.right, [width])
+          .le(d.bottom, [height]);
       });
+
 
       var svg = d3.select("body")
         .append("svg")
-        .attr({width: 500, height: 500});
+        .attr({width: width, height: height});
 
       var outline = svg.append("rect")
         .classed({outline: 1})
@@ -72,11 +86,7 @@
         .data(boxD);
 
       box.enter().append("rect")
-        .classed({box: 1})
-        .attr({
-          width: 50,
-          height: 50
-        });
+        .classed({box: 1});
 
       var rect = svg.selectAll("rect");
 
