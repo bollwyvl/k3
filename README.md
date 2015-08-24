@@ -57,7 +57,7 @@ Constrain `leftHand` to be equal to `rightHand`.
 `rightHand` can be a number, or an array of variables (or multiples of variables). If a number, this value will be suggested to the solver,
 rather than constrained.
 
-If `name` is provided, and constraints previously created with that
+If `name` is provided, any constraints previously created with that
 `name` will be removed before adding this constraint.
 
 ### `k3.ge([name], leftHand, rightHand)`
@@ -65,13 +65,16 @@ Constrain `leftHand` to be greater than or equal to `rightHand`.
 
 `rightHand` must be an array of variables (or multiples of variables).
 
-If `name` is provided, and constraints previously created with that
+If `name` is provided, any constraints previously created with that
 `name` will be removed before adding this constraint.
 
 ### `k3.le([name], leftHand, rightHand)`
 Constrain `leftHand` to be greater than or equal to `rightHand`.
 
 `rightHand` must be an array of variables (or multiples of variables).
+
+If `name` is provided, any constraints previously created with that
+`name` will be removed before adding this constraint.
 
 
 [kiwi]: https://github.com/nucleic/kiwi/tree/feature-js
